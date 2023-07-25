@@ -12,5 +12,6 @@ namespace Bloc3_CSharp.Data
         }
 
         public DbSet<Category> Categories { get; set; }
+        public DbSet<Discount> Discounts { get; set; }
     }
 }
