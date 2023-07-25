@@ -14,5 +14,34 @@ html {
 }
 
 body {
-  margin-bottom: 60px;
+    margin-bottom: 60px;
+    min-height: 100%;
+    margin: 0;
+    padding: 0;
+    background-color: rgba(33,37,41,1);
+}
+.navbar-brand {
+    background-image: url(https://www.mercadona.es/static/media/mercadona-logo.a65a34320ed4e902bf30.svg);
+    background-color: white;
+    align-self: center;
+    background-position: 50%;
+    background-repeat: no-repeat;
+    height: 40px;
+    left: -10px;
+    margin-left: 2rem;
+    position: relative;
+    width: 230px;
+}
+.accueil-content {
+    background-image: url(https://www.mercadona.es/static/media/banner1@1x.a1cc528b6c06e1f281e1.jpg);
+    background-size: cover;
+    min-height: 80vh;
+    padding-top: 25vh;
+    max-width: 100vw;
+    padding-left: 15vw;
+}
+h1 {
+    text-align: center;
+    color: rgba(25,135,84,1);
+    font-weight: bold;
 }

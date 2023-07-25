@@ -18,7 +18,7 @@ namespace Bloc3_CSharp.Controllers
             return View();
         }
 
-        public IActionResult Privacy()
+        public IActionResult Catalog()
         {
             return View();
         }
