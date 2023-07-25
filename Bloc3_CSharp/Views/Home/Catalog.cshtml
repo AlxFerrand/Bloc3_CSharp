@@ -1,6 +1,57 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
+﻿@model CatalogViewModel;
+<h1 class="text-decoration-underline">Catalogue</h1>
+    <h2 class="text-center pt-2">Nos Articles</h2>
+    <div class="row align-items-center">
+        <h4 class="col-1 textFilter">Filtrer:</h4>
+        <select class=" col-1 catFilter" id="catFilter">
+            <option value="all">Tout</option>
+        @foreach(var c in Model.Categories)
+        {
+            <option value="@c.Id">@c.Name</option>
+        }  
+        </select>
+        <button class="col-1 btnFilter" id="btnFilter">Valider</button>
+    </div>
+@if (Model.Articles.Count() == 0)
+{
+    <h4 class="text-center pt-2 text-warning">Aucun article disponible pour cette categorie</h4>
 }
-<h1>Catalogue</h1>
+    <div class="catalogue row row-cols-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 row-cols-xxl-6">
+    @foreach(var a in Model.Articles)
+    {
+        <article class="col p-2">
+            <!-- Déclaration du composant -->
+            <div class="card">
+                <!-- Image située en haut -->
+                <div class="card-img-container">
+                    <img class="card-image rounded-2"
+                         src="/img/@a.PictureName" />
+                </div>
+                <!-- Corps de la carte -->
+                <div class="card-body">
+                    <!-- Titre -->
+                    <div class="row">
+                        <h5 class="card-Label col card-text-important">@a.Label</h5>
+                        <!-- Contenu de la carte -->
+                        <p class="category text-secondary small col">@a.CategoryName</p>
+                    </div>
+                    @if (a.DiscountValue == 0)
+                    {
+                        <h4 class="card-text-important">@a.Price €</h4>
+                    }
+                    else
+                    {
+                        <h4>
+                            <span class="text-barre">@a.BasePrice €</span>
+                            <span class="card-text-important onSales">@a.Price €</span>
+                        </h4>
+                    }
+
+
+                    <p class="text-truncate text-truncate--2">@a.Description</p>
+                </div>
+            </div>
+        </article>
+    }
+   
+    </div>
