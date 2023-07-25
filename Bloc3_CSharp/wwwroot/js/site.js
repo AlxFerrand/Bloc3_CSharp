@@ -1,4 +1,8 @@
-﻿// Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
-// for details on configuring this project to bundle and minify static web assets.
+﻿let btnFilter = document.getElementById('btnFilter')
 
-// Write your JavaScript code.
+
+function filterCatalogue()
+{
+    location.replace("/home/Catalog?catId=" + document.getElementById('catFilter').value)
+}
+btnFilter.addEventListener('click', filterCatalogue)

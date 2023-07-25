@@ -22,16 +22,24 @@ namespace Bloc3_CSharp.Controllers
             return View();
         }
 
-        public IActionResult Catalog()
+        public IActionResult Catalog(int? catId)
         {
-            List<Product> products = _context.Products.Include(p => p.Category).ToList();
+            List<Product> products = new List<Product>();
+            if (catId == 0 || catId== null)
+            {
+                products = _context.Products.Include(p => p.Category).ToList();
+            }
+            else
+            {
+                products = _context.Products.Include(p => p.Category).Where(p => p.CategoryId == catId).ToList();
+            }
             List<Category> categories = _context.Categories.ToList();
             List<Articles> articles = new List<Articles>();
             foreach (var p in products)
             {
                 articles.Add(new Articles(p, _context));
             }
-            CatalogViewModel vm = new CatalogViewModel(articles,categories);
+            CatalogViewModel vm = new CatalogViewModel(articles, categories);
 
             return View(vm);
         }
