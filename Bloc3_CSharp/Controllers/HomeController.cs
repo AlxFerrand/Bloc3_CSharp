@@ -24,6 +24,7 @@ namespace Bloc3_CSharp.Controllers
 
         public IActionResult Catalog(int? catId)
         {
+            //Recuperation des produit en fonction de la category
             List<Product> products = new List<Product>();
             if (catId == 0 || catId== null)
             {
@@ -33,13 +34,29 @@ namespace Bloc3_CSharp.Controllers
             {
                 products = _context.Products.Include(p => p.Category).Where(p => p.CategoryId == catId).ToList();
             }
+            //Recuperation de la liste des categories
             List<Category> categories = _context.Categories.ToList();
+
+            //Creation des Articles pour vm
             List<Articles> articles = new List<Articles>();
             foreach (var p in products)
             {
                 articles.Add(new Articles(p, _context));
             }
-            CatalogViewModel vm = new CatalogViewModel(articles, categories);
+
+            //
+            Category selectedCategory;
+            if (catId != null)
+            {
+                selectedCategory = _context.Categories.Find((int)catId);
+            }
+            else
+            {
+                selectedCategory = new Category();
+            }
+            
+
+            CatalogViewModel vm = new CatalogViewModel(articles, categories, selectedCategory);
 
             return View(vm);
         }
