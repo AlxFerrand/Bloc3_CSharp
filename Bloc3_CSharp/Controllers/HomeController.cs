@@ -1,5 +1,6 @@
 ﻿using Bloc3_CSharp.Data;
 using Bloc3_CSharp.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
