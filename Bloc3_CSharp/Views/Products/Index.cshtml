@@ -1,40 +1,65 @@
-﻿@model IEnumerable<Bloc3_CSharp.Models.Product>
+﻿@model CatalogViewModel;
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Manage Products";
 }
 
-<h1>Index</h1>
+<h1>Manage Products</h1>
+<div class="row align-items-center">
+    <h4 class="col-1 textFilter">Filter:</h4>
+    <select class=" col-1 catFilter" id="manageProductCatFilter">
+        @if (Model.SelectedCategory.Id == 0)
+        {
+            <option value="all">All</option>
+            @foreach (var c in Model.Categories)
+            {
+                <option value="@c.Id">@c.Name</option>
+            }
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
+        }
+        else
+        {
+            <option value="@Model.SelectedCategory.Id">@Model.SelectedCategory.Name</option>
+            <option value="all">All</option>
+            @foreach (var c in Model.Categories)
+            {
+                <option value="@c.Id">@c.Name</option>
+            }
+
+        }
+    </select>
+    <button role="button" class="col-1 btnFilter" id="manageProductBtnFilter">Confirm</button>
+</div>
+<div class="row justify-content-center">
+   <a class="col-2 btn btn-success mb-3" asp-action="Create">Create New</a>
+</div>
+@if (Model.Articles.Count() == 0)
+{
+    <h4 class="text-center pt-2 mb-4 text-warning">Aucun article disponible pour cette categorie</h4>
+}
+<table class="table table-striped">
     <thead>
-        <tr>
+        <tr class="text-white" style="background-color : rgba(255,141,53,1)">
             <th>
-                @Html.DisplayNameFor(model => model.Label)
+                Label
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Description)
+                Description
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Price)
+                BasePrice
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Category)
+               CategoryName
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.PictureName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DiscountId)
+                DiscountId
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
+@foreach (var item in Model.Articles) {
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.Label)
@@ -43,23 +68,20 @@
                 @Html.DisplayFor(modelItem => item.Description)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Price)
+                @Html.DisplayFor(modelItem => item.BasePrice)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Category.Id)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.PictureName)
+                @Html.DisplayFor(modelItem => item.CategoryName)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.DiscountId)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                    <a class="btn btn-warning" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+                    <a class="btn btn-danger" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
             </td>
         </tr>
 }
     </tbody>
 </table>
+<script src="~/js/ManageProducts.js" asp-append-version="true"></script>

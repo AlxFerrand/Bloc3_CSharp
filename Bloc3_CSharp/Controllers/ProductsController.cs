@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Bloc3_CSharp.Data;
 using Bloc3_CSharp.Models;
+using Microsoft.AspNetCore.Authorization;
+using System.Data;
 
 namespace Bloc3_CSharp.Controllers
 {
@@ -20,13 +22,45 @@ namespace Bloc3_CSharp.Controllers
         }
 
         // GET: Products
-        public async Task<IActionResult> Index()
+        [Authorize(Roles = "SuperAdmin, Admin")]
+        public async Task<IActionResult> Index(int? catId)
         {
-            var applicationDbContext = _context.Products.Include(p => p.Category);
-            return View(await applicationDbContext.ToListAsync());
+            //Recuperation des produit en fonction de la category
+            List<Product> products = new List<Product>();
+            if (catId == 0 || catId == null)
+            {
+                products = _context.Products.Include(p => p.Category).ToList();
+            }
+            else
+            {
+                products = _context.Products.Include(p => p.Category).Where(p => p.CategoryId == catId).ToList();
+            }
+            //Recuperation de la liste des categories
+            List<Category> categories = _context.Categories.ToList();
+            //Creation des Articles pour vm
+            List<Articles> articles = new List<Articles>();
+            foreach (var p in products)
+            {
+                articles.Add(new Articles(p, _context));
+            }
+
+            Category selectedCategory;
+            if (catId != null)
+            {
+                selectedCategory = _context.Categories.Find((int)catId);
+            }
+            else
+            {
+                selectedCategory = new Category();
+            }
+
+
+            CatalogViewModel vm = new CatalogViewModel(articles, categories, selectedCategory);
+            return View(vm);
         }
 
         // GET: Products/Details/5
+        [Authorize(Roles = "SuperAdmin, Admin")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null || _context.Products == null)
@@ -46,6 +80,7 @@ namespace Bloc3_CSharp.Controllers
         }
 
         // GET: Products/Create
+        [Authorize(Roles = "SuperAdmin, Admin")]
         public IActionResult Create()
         {
             ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Id");
@@ -56,6 +91,7 @@ namespace Bloc3_CSharp.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
+        [Authorize(Roles = "SuperAdmin, Admin")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Label,Description,Price,CategoryId,PictureName")] Product product)
         {
@@ -70,6 +106,7 @@ namespace Bloc3_CSharp.Controllers
         }
 
         // GET: Products/Edit/5
+        [Authorize(Roles = "SuperAdmin, Admin")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.Products == null)
@@ -90,6 +127,7 @@ namespace Bloc3_CSharp.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
+        [Authorize(Roles = "SuperAdmin, Admin")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Label,Description,Price,CategoryId,PictureName,DiscountId")] Product product)
         {
@@ -98,7 +136,7 @@ namespace Bloc3_CSharp.Controllers
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            if (!String.IsNullOrEmpty(product.Label) && !String.IsNullOrEmpty(product.Description) && !(product.Price<=0))
             {
                 try
                 {
@@ -123,6 +161,7 @@ namespace Bloc3_CSharp.Controllers
         }
 
         // GET: Products/Delete/5
+        [Authorize(Roles = "SuperAdmin, Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || _context.Products == null)
@@ -143,6 +182,7 @@ namespace Bloc3_CSharp.Controllers
 
         // POST: Products/Delete/5
         [HttpPost, ActionName("Delete")]
+        [Authorize(Roles = "SuperAdmin, Admin")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {

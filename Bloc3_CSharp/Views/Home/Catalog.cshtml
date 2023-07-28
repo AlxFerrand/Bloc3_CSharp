@@ -1,13 +1,13 @@
 ﻿@model CatalogViewModel;
 
-<h1 class="text-decoration-underline">Catalogue</h1>
-<h2 class="text-center pt-2">Nos Articles</h2>
+<h1 class="text-decoration-underline">Catalog</h1>
+<h2 class="text-center pt-2">Our Items</h2>
 <div class="row align-items-center">
-    <h4 class="col-1 textFilter">Filtrer:</h4>
+    <h4 class="col-1 textFilter">Filter:</h4>
     <select class=" col-1 catFilter" id="catFilter">
         @if (Model.SelectedCategory.Id == 0 )
         {
-            <option value="all">Tout</option>
+            <option value="all">All</option>
             @foreach (var c in Model.Categories)
             {
                 <option value="@c.Id">@c.Name</option>
@@ -16,7 +16,7 @@
         } else
         {
             <option value="@Model.SelectedCategory.Id">@Model.SelectedCategory.Name</option>
-            <option value="all">Tout</option>
+            <option value="all">All</option>
             @foreach (var c in Model.Categories)
             {
                 <option value="@c.Id">@c.Name</option>
@@ -24,7 +24,7 @@
 
         }
     </select>
-    <button role="button" class="col-1 btnFilter" id="btnFilter">Valider</button>
+    <button role="button" class="col-1 btnFilter" id="btnFilter">Confirm</button>
 </div>
 @if (Model.Articles.Count() == 0)
 {
@@ -66,3 +66,4 @@
         </article>
     }
 </div>
+<script src="~/js/site.js" asp-append-version="true"></script>
