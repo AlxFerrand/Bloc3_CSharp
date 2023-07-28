@@ -59,8 +59,8 @@ namespace Bloc3_CSharp.Controllers
             return View(vm);
         }
 
-        // GET: Products/Details/5
-        [Authorize(Roles = "SuperAdmin, Admin")]
+        // GET: Products/Details/5 (Desactivé)
+        /*[Authorize(Roles = "SuperAdmin, Admin")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null || _context.Products == null)
@@ -77,7 +77,7 @@ namespace Bloc3_CSharp.Controllers
             }
 
             return View(product);
-        }
+        }*/
 
         // GET: Products/Create
         [Authorize(Roles = "SuperAdmin, Admin")]
@@ -88,8 +88,6 @@ namespace Bloc3_CSharp.Controllers
         }
 
         // POST: Products/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [Authorize(Roles = "SuperAdmin, Admin")]
         [ValidateAntiForgeryToken]
@@ -124,8 +122,6 @@ namespace Bloc3_CSharp.Controllers
         }
 
         // POST: Products/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [Authorize(Roles = "SuperAdmin, Admin")]
         [ValidateAntiForgeryToken]
