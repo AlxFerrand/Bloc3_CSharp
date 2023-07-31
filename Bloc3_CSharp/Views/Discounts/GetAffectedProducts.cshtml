@@ -1,0 +1,62 @@
+﻿@model AffectedProductsViewModel;
+@{
+    ViewData["Title"] = "Manage Discount / Products";
+}
+
+
+<a class="float-start text-decoration-none mt-3" asp-controller="Discounts" asp-action="Index">< Back</a>
+<h1 class="col">Manage Discount / Products</h1>
+<div class="mt-3">
+    <h4>Discount</h4>
+    <hr />
+    <div class="row row-cols-5">
+        <p class="col fw-bold">Id : <span class="fw-normal">@Model.Discount.Id </span></p>
+        <p class="col fw-bold">On date : <span class="fw-normal">@Model.Discount.OnDate </span></p>
+        <p class="col fw-bold">Off Date : <span class="fw-normal">@Model.Discount.OffDate </span></p>
+        <p class="col fw-bold">Value : <span class="fw-normal">@Model.Discount.Value </span></p>
+        <p class="col fw-bold">Nomber of Products : <span class="fw-normal">@Model.ArticlesListOfDiscount.Count()</span></p>
+    </div>
+    <hr />
+    <div class="p-2">
+        <h4>Affected Products</h4>
+        <form method="post">
+        <input type="hidden" name="DiscountId" value="@Model.Discount.Id" />
+        <table class="table table-striped">
+            <tr class="">
+                <th>Id</th>
+                <th>Label</th>
+                <th>Category</th>
+                <th>Base price</th>
+                <th>Final price</th>
+                <th>Supp</th>
+            </tr>
+            @if (Model.ArticlesListOfDiscount.Count() == 0)
+            {
+                <tr class="text-center"><td colspan="6">No Product</td></tr>
+            }
+            else
+            {
+                @foreach (Articles articles in Model.ArticlesListOfDiscount)
+                {
+                    <tr>
+                        <td>@articles.Id</td>
+                        <td>@articles.Label</td>
+                        <td>@articles.CategoryName</td>
+                        <td>@articles.BasePrice</td>
+                        <td>@Math.Round(Decimal.Multiply(articles.BasePrice,(100-Model.Discount.Value)/100.0M),2)</td>
+                        <td>
+                            <input type="checkbox" name="DeleteIds" value="@articles.Id">
+                        </td>
+                    </tr>
+                }
+            }
+        </table>
+        <div class="text-center"> 
+        <button type="submit" class="btn btn-primary">Save</button>
+        <a class="ms-2" asp-controller="Discounts" asp-action="Index"> Back to discounts list</a>
+        </div>
+        </form>
+    </div>
+
+
+</div>

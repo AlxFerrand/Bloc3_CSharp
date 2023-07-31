@@ -45,6 +45,7 @@
                     <a class="text-decoration-none text-white" asp-action="Index" asp-route-sortOrder="value">Value ▼</a>
                 }
             </th>
+            <th>Nb products</th>
             <th class="col-1"></th>
             <th class="col-2"></th>
         </tr>
@@ -65,11 +66,20 @@
                 @Html.DisplayFor(modelItem => item.Value)
             </td>
             <td>
+                @Model.NombersOfProductByDiscount.GetValueOrDefault(item.Id)
+            </td>
+            <td>
                 <a class="btn btn-warning" asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
                 <a class="btn btn-danger" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
             </td>
             <td class="text-center">
-                <a class="btn btn-secondary" asp-action="GetAffectedProducts" asp-route-id="@item.Id">Affected Products</a>
+                    @if (Model.NombersOfProductByDiscount.GetValueOrDefault(item.Id) == 0)
+                    {
+                        <a class="btn btn-outline-secondary" asp-action="GetAffectedProducts" asp-route-id="@item.Id">Supp Products</a>
+                    }else{
+                        <a class="btn btn-secondary" asp-action="GetAffectedProducts" asp-route-id="@item.Id">Supp Products</a>
+                    }
+                | <a class="btn btn-secondary" asp-action="AddAffectedProducts" asp-route-id="@item.Id">Add Products</a>
             </td>
         </tr>
 }

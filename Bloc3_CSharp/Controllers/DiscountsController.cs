@@ -9,21 +9,24 @@ using Bloc3_CSharp.Data;
 using Bloc3_CSharp.Models;
 using Microsoft.AspNetCore.Authorization;
 using System.Data;
+using Bloc3_CSharp.Services.abstractServices;
 
 namespace Bloc3_CSharp.Controllers
 {
     public class DiscountsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly ICreateArticleService _createArticleService;
 
-        public DiscountsController(ApplicationDbContext context)
+        public DiscountsController(ApplicationDbContext context, ICreateArticleService createArticleService)
         {
             _context = context;
+            _createArticleService = createArticleService;
         }
 
         // GET: Discounts
         [Authorize(Roles = "SuperAdmin, Admin")]
-        public async Task<IActionResult> Index(string sortOrder)
+        public IActionResult Index(string sortOrder)
         {
             ViewData["order"] = String.IsNullOrEmpty(sortOrder) ? "id" : sortOrder;
             List<Discount> discounts = new List<Discount>();
@@ -54,7 +57,12 @@ namespace Bloc3_CSharp.Controllers
                     discounts = _context.Discounts.OrderBy(d => d.Id).ToList();
                     break;
             }
-            DiscountsIndexViewModel vm = new DiscountsIndexViewModel(discounts);
+            Dictionary<int,int> nomberOfProducts = new Dictionary<int,int>();
+            foreach (var discount in discounts)
+            {
+                nomberOfProducts.Add(discount.Id, _context.Products.Include(p => p.Category).Where(p => p.DiscountId == discount.Id).Count());
+            }
+            DiscountsIndexViewModel vm = new DiscountsIndexViewModel(discounts,nomberOfProducts);
             return View(vm);
         }
 
@@ -191,6 +199,110 @@ namespace Bloc3_CSharp.Controllers
             }
             
             await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+
+        // GET: Discounts/GetAffectedProducts/5
+        [Authorize(Roles = "SuperAdmin, Admin")]
+        public async Task<IActionResult> GetAffectedProducts (int id)
+        {
+            if (id == 0 || _context.Discounts == null)
+            {
+                return NotFound();
+            }
+
+            var discount = await _context.Discounts
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (discount == null)
+            {
+                return NotFound();
+            }
+            var productsListOfDiscount = _context.Products.Include(p => p.Category).Where(p => p.DiscountId == id).ToList();
+            List<Articles> articlesListOfDiscount = new List<Articles>();
+            foreach (var p in productsListOfDiscount)
+            {
+                articlesListOfDiscount.Add(_createArticleService.CreateArticle(p, _context));
+            }
+
+            AffectedProductsViewModel vm = new AffectedProductsViewModel(discount, articlesListOfDiscount);
+
+            return View(vm);
+        }
+
+        // POST: Discounts/GetAffectedProducts/5
+        [HttpPost]
+        [Authorize(Roles = "SuperAdmin, Admin")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> GetAffectedProducts(int DiscountId,int[] DeleteIds)
+        {
+            foreach (var id in DeleteIds)
+            {
+                Product product = _context.Products.Find(id);
+                if (product.DiscountId == DiscountId)
+                {
+                    product.DiscountId = 0;
+                    try
+                    {
+                        _context.Update(product);
+                        await _context.SaveChangesAsync();
+                    }
+                    catch (DbUpdateConcurrencyException)
+                    {
+                        return NotFound();
+                    }
+                }       
+            }
+            return RedirectToAction(nameof(Index));
+        }
+
+        // GET: Discounts/AddAffectedProducts/5
+        [Authorize(Roles = "SuperAdmin, Admin")]
+        public async Task<IActionResult> AddAffectedProducts(int id)
+        {
+            if (id == 0 || _context.Discounts == null)
+            {
+                return NotFound();
+            }
+
+            var discount = await _context.Discounts
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (discount == null)
+            {
+                return NotFound();
+            }
+            var productsListNotOnDiscount = _context.Products.Include(p => p.Category).Where(p => p.DiscountId != id).ToList();
+            List<Articles> articlesListNotOnDiscount = new List<Articles>();
+            foreach (var p in productsListNotOnDiscount)
+            {
+                articlesListNotOnDiscount.Add(_createArticleService.CreateArticle(p, _context));
+            }
+
+            AffectedProductsViewModel vm = new AffectedProductsViewModel(discount, articlesListNotOnDiscount);
+
+            return View(vm);
+        }
+
+        // POST: Discounts/AddAffectedProducts/int[]
+        [HttpPost]
+        [Authorize(Roles = "SuperAdmin, Admin")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddAffectedProducts(int DiscountId, int[] AddIds)
+        {
+            foreach (var id in AddIds)
+            {
+                Product product = _context.Products.Find(id);
+                product.DiscountId = DiscountId;
+                try
+                {
+                    _context.Update(product);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    return NotFound();
+                }
+
+            }
             return RedirectToAction(nameof(Index));
         }
 
