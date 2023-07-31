@@ -1,4 +1,6 @@
 using Bloc3_CSharp.Data;
+using Bloc3_CSharp.Services.abstractServices;
+using Bloc3_CSharp.Services.concretServices;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,6 +19,8 @@ builder.Services.AddControllersWithViews();
 
 builder.Services.AddRazorPages()
     .AddRazorRuntimeCompilation();
+builder.Services.AddSingleton<ICheckStringDateService, CheckStringDateService>();
+builder.Services.AddSingleton<ICreateArticleService, CreateArticleService>();
 
 var app = builder.Build();
 

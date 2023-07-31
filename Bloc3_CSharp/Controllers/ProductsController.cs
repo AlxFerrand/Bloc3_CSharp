@@ -9,16 +9,19 @@ using Bloc3_CSharp.Data;
 using Bloc3_CSharp.Models;
 using Microsoft.AspNetCore.Authorization;
 using System.Data;
+using Bloc3_CSharp.Services.abstractServices;
 
 namespace Bloc3_CSharp.Controllers
 {
     public class ProductsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly ICreateArticleService _createArticleService;
 
-        public ProductsController(ApplicationDbContext context)
+        public ProductsController(ApplicationDbContext context, ICreateArticleService createArticleService)
         {
             _context = context;
+            _createArticleService = createArticleService;
         }
 
         // GET: Products
@@ -41,7 +44,7 @@ namespace Bloc3_CSharp.Controllers
             List<Articles> articles = new List<Articles>();
             foreach (var p in products)
             {
-                articles.Add(new Articles(p, _context));
+                articles.Add(_createArticleService.CreateArticle(p, _context));
             }
 
             Category selectedCategory;
