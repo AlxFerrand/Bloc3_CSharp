@@ -1,32 +1,60 @@
-﻿@model IEnumerable<Bloc3_CSharp.Models.Discount>
+﻿@model DiscountsIndexViewModel;
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Manage Discounts";
 }
 
-<h1>Index</h1>
+<h1>Manage Discounts</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
+<div class="row justify-content-center">
+    <a class="col-2 btn btn-success mb-3 mt-3" asp-action="Create">Create New</a>
+</div>
+<table class="table table-striped">
     <thead>
-        <tr>
+        <tr class ="text-white text-center" style="background-color : rgba(255,141,53,1)">
             <th>
-                @Html.DisplayNameFor(model => model.OnDate)
+                <a class="text-decoration-none text-white" asp-action="Index" asp-route-sortOrder="id">Id ▲</a>
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.OffDate)
+                @if (ViewData["order"].Equals("onDate"))
+                {
+                    <a class="text-decoration-none text-white" asp-action="Index" asp-route-sortOrder="onDate_desc">OnDate ▲</a>
+                }
+                else
+                {
+                    <a class="text-decoration-none text-white" asp-action="Index" asp-route-sortOrder="onDate">OnDate ▼</a>
+                }
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Value)
+                @if (ViewData["order"].Equals("offDate"))
+                {
+                    <a class="text-decoration-none text-white" asp-action="Index" asp-route-sortOrder="offDate_desc">OffDate ▲</a>
+                }
+                else
+                {
+                    <a class="text-decoration-none text-white" asp-action="Index" asp-route-sortOrder="offDate">OffDate ▼</a>
+                }
             </th>
-            <th></th>
+            <th>
+                @if (ViewData["order"].Equals("value"))
+                {
+                    <a class="text-decoration-none text-white" asp-action="Index" asp-route-sortOrder="value_desc">Value ▲</a>
+                }
+                else
+                {
+                    <a class="text-decoration-none text-white" asp-action="Index" asp-route-sortOrder="value">Value ▼</a>
+                }
+            </th>
+            <th class="col-1"></th>
+            <th class="col-2"></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
+@foreach (var item in Model.Discounts) {
+        <tr class="text-center">
+            <td>
+                @Html.DisplayFor(modelItem => item.Id)
+            </td>
             <td>
                 @Html.DisplayFor(modelItem => item.OnDate)
             </td>
@@ -37,9 +65,11 @@
                 @Html.DisplayFor(modelItem => item.Value)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                <a class="btn btn-warning" asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                <a class="btn btn-danger" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+            </td>
+            <td class="text-center">
+                <a class="btn btn-secondary" asp-action="GetAffectedProducts" asp-route-id="@item.Id">Affected Products</a>
             </td>
         </tr>
 }

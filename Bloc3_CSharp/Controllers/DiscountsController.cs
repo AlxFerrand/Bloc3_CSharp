@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Bloc3_CSharp.Data;
 using Bloc3_CSharp.Models;
+using Microsoft.AspNetCore.Authorization;
+using System.Data;
 
 namespace Bloc3_CSharp.Controllers
 {
@@ -20,14 +22,45 @@ namespace Bloc3_CSharp.Controllers
         }
 
         // GET: Discounts
-        public async Task<IActionResult> Index()
+        [Authorize(Roles = "SuperAdmin, Admin")]
+        public async Task<IActionResult> Index(string sortOrder)
         {
-              return _context.Discounts != null ? 
-                          View(await _context.Discounts.ToListAsync()) :
-                          Problem("Entity set 'ApplicationDbContext.Discounts'  is null.");
+            ViewData["order"] = String.IsNullOrEmpty(sortOrder) ? "id" : sortOrder;
+            List<Discount> discounts = new List<Discount>();
+            switch (sortOrder)
+            {
+                case "id":
+                    discounts = _context.Discounts.OrderBy(d => d.Id).ToList();
+                    break;
+                case "onDate":
+                    discounts = _context.Discounts.OrderBy(d => d.OnDate).ToList();
+                    break;
+                case "onDate_desc":
+                    discounts = _context.Discounts.OrderByDescending(d => d.OnDate).ToList();
+                    break;
+                case "offDate":
+                    discounts = _context.Discounts.OrderBy(d => d.OffDate).ToList();
+                    break;
+                case "offDate_desc":
+                    discounts = _context.Discounts.OrderByDescending(d => d.OffDate).ToList();
+                    break;
+                case "value":
+                    discounts = _context.Discounts.OrderBy(d => d.Value).ToList();
+                    break;
+                case "value_desc":
+                    discounts = _context.Discounts.OrderByDescending(d => d.Value).ToList();
+                    break;
+                default:
+                    discounts = _context.Discounts.OrderBy(d => d.Id).ToList();
+                    break;
+            }
+            DiscountsIndexViewModel vm = new DiscountsIndexViewModel(discounts);
+            return View(vm);
         }
 
-        // GET: Discounts/Details/5
+
+        // GET: Discounts/Details/5 (Desactivé)
+        /*[Authorize(Roles = "SuperAdmin, Admin")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null || _context.Discounts == null)
@@ -43,9 +76,10 @@ namespace Bloc3_CSharp.Controllers
             }
 
             return View(discount);
-        }
+        }*/
 
         // GET: Discounts/Create
+        [Authorize(Roles = "SuperAdmin, Admin")]
         public IActionResult Create()
         {
             return View();
@@ -55,6 +89,7 @@ namespace Bloc3_CSharp.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
+        [Authorize(Roles = "SuperAdmin, Admin")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,OnDate,OffDate,Value")] Discount discount)
         {
@@ -68,6 +103,7 @@ namespace Bloc3_CSharp.Controllers
         }
 
         // GET: Discounts/Edit/5
+        [Authorize(Roles = "SuperAdmin, Admin")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.Discounts == null)
@@ -87,6 +123,7 @@ namespace Bloc3_CSharp.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
+        [Authorize(Roles = "SuperAdmin, Admin")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,OnDate,OffDate,Value")] Discount discount)
         {
@@ -119,6 +156,7 @@ namespace Bloc3_CSharp.Controllers
         }
 
         // GET: Discounts/Delete/5
+        [Authorize(Roles = "SuperAdmin, Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || _context.Discounts == null)
@@ -138,6 +176,7 @@ namespace Bloc3_CSharp.Controllers
 
         // POST: Discounts/Delete/5
         [HttpPost, ActionName("Delete")]
+        [Authorize(Roles = "SuperAdmin, Admin")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
