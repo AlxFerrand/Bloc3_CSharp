@@ -86,7 +86,7 @@ namespace Bloc3_CSharp.Controllers
         [Authorize(Roles = "SuperAdmin, Admin")]
         public IActionResult Create()
         {
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Id");
+            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name");
             return View();
         }
 
