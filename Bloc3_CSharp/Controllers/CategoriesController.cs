@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Bloc3_CSharp.Data;
 using Bloc3_CSharp.Models;
+using Microsoft.AspNetCore.Authorization;
+using System.Data;
 
 namespace Bloc3_CSharp.Controllers
 {
@@ -20,6 +22,7 @@ namespace Bloc3_CSharp.Controllers
         }
 
         // GET: Categories
+        [Authorize(Roles = "SuperAdmin, Admin")]
         public async Task<IActionResult> Index()
         {
               return _context.Categories != null ? 
@@ -27,7 +30,8 @@ namespace Bloc3_CSharp.Controllers
                           Problem("Entity set 'ApplicationDbContext.Categories'  is null.");
         }
 
-        // GET: Categories/Details/5
+        // GET: Categories/Details/5 (Desactive)
+        /*[Authorize(Roles = "SuperAdmin, Admin")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null || _context.Categories == null)
@@ -43,9 +47,10 @@ namespace Bloc3_CSharp.Controllers
             }
 
             return View(category);
-        }
+        }*/
 
         // GET: Categories/Create
+        [Authorize(Roles = "SuperAdmin, Admin")]
         public IActionResult Create()
         {
             return View();
@@ -55,6 +60,7 @@ namespace Bloc3_CSharp.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
+        [Authorize(Roles = "SuperAdmin, Admin")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name")] Category category)
         {
@@ -68,6 +74,7 @@ namespace Bloc3_CSharp.Controllers
         }
 
         // GET: Categories/Edit/5
+        [Authorize(Roles = "SuperAdmin, Admin")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.Categories == null)
@@ -87,6 +94,7 @@ namespace Bloc3_CSharp.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
+        [Authorize(Roles = "SuperAdmin, Admin")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name")] Category category)
         {
@@ -119,6 +127,7 @@ namespace Bloc3_CSharp.Controllers
         }
 
         // GET: Categories/Delete/5
+        [Authorize(Roles = "SuperAdmin, Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || _context.Categories == null)
@@ -138,6 +147,7 @@ namespace Bloc3_CSharp.Controllers
 
         // POST: Categories/Delete/5
         [HttpPost, ActionName("Delete")]
+        [Authorize(Roles = "SuperAdmin, Admin")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {

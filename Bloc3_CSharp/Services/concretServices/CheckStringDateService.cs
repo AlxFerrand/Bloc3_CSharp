@@ -29,5 +29,12 @@ namespace Bloc3_CSharp.Services.concretServices
             DateTime dateToCompareDT = DateTime.Parse(dateToCompare);
             return DateTime.Compare(dateToCompareDT, DateTime.Now) <= 0;
         }
+
+        public bool DateOneIsAfterDateTwo(string dateOne, string dateTwo)
+        {
+            DateTime dateOneDt = DateTime.Parse(dateOne);
+            DateTime dateTwoDt = DateTime.Parse(dateTwo);
+            return DateTime.Compare(dateOneDt, dateTwoDt) > 0;
+        }
     }
 }

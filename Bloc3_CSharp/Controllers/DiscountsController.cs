@@ -17,11 +17,13 @@ namespace Bloc3_CSharp.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly ICreateArticleService _createArticleService;
+        private readonly ICheckStringDateService _checkStringDateService;
 
-        public DiscountsController(ApplicationDbContext context, ICreateArticleService createArticleService)
+        public DiscountsController(ApplicationDbContext context, ICreateArticleService createArticleService, ICheckStringDateService checkStringDateService)
         {
             _context = context;
             _createArticleService = createArticleService;
+            _checkStringDateService = checkStringDateService;
         }
 
         // GET: Discounts
@@ -101,11 +103,19 @@ namespace Bloc3_CSharp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,OnDate,OffDate,Value")] Discount discount)
         {
+            if (!_checkStringDateService.DateOneIsAfterDateTwo(discount.OffDate, discount.OnDate))
+            {
+                ModelState.AddModelError("OffDate", "Off date must be after On date");
+            }
+            if (!(discount.Value >=0 && discount.Value <= 100))
+            {
+                ModelState.AddModelError("Value", "Discount value must be between 0 and 100");
+            }
             if (ModelState.IsValid)
             {
                 _context.Add(discount);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Index));  
             }
             return View(discount);
         }
@@ -138,6 +148,14 @@ namespace Bloc3_CSharp.Controllers
             if (id != discount.Id)
             {
                 return NotFound();
+            }
+            if (!_checkStringDateService.DateOneIsAfterDateTwo(discount.OffDate, discount.OnDate))
+            {
+                ModelState.AddModelError("OffDate", "Off date must be after On date");
+            }
+            if (!(discount.Value >= 0 && discount.Value <= 100))
+            {
+                ModelState.AddModelError("Value", "Discount value must be between 0 and 100");
             }
 
             if (ModelState.IsValid)
@@ -191,6 +209,20 @@ namespace Bloc3_CSharp.Controllers
             if (_context.Discounts == null)
             {
                 return Problem("Entity set 'ApplicationDbContext.Discounts'  is null.");
+            }
+            var productsAffected = _context.Products.Include(p => p.Category).Where(p => p.DiscountId == id).ToList();
+            foreach (Product p in productsAffected)
+            {
+                p.DiscountId = 0;
+                try
+                {
+                    _context.Update(p);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    return NotFound();
+                }
             }
             var discount = await _context.Discounts.FindAsync(id);
             if (discount != null)

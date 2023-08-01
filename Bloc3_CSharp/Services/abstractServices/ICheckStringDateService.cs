@@ -6,5 +6,6 @@
         public bool DateIsBeforeNow(string dateToCompare);
         public bool DateIsAfterOrEqualNow(string dateToCompare);
         public bool DateIsBeforeOrEqualNow(string dateToCompare);
+        public bool DateOneIsAfterDateTwo(string dateOne, string dateTwo);
     }   
 }
