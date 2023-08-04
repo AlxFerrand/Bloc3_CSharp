@@ -10,6 +10,8 @@ using Bloc3_CSharp.Models;
 using Microsoft.AspNetCore.Authorization;
 using System.Data;
 using Bloc3_CSharp.Services.abstractServices;
+using Microsoft.AspNetCore.WebUtilities;
+using Bloc3_CSharp.Services.concretServices;
 
 namespace Bloc3_CSharp.Controllers
 {
@@ -17,11 +19,13 @@ namespace Bloc3_CSharp.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly ICreateArticleService _createArticleService;
+        private readonly ISaveFilesService _saveFilesService;
 
-        public ProductsController(ApplicationDbContext context, ICreateArticleService createArticleService)
+        public ProductsController(ApplicationDbContext context, ICreateArticleService createArticleService, ISaveFilesService saveFilesService)
         {
             _context = context;
             _createArticleService = createArticleService;
+            _saveFilesService = saveFilesService;
         }
 
         // GET: Products
@@ -94,10 +98,16 @@ namespace Bloc3_CSharp.Controllers
         [HttpPost]
         [Authorize(Roles = "SuperAdmin, Admin")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Label,Description,Price,CategoryId,PictureName")] Product product)
+        public async Task<IActionResult> Create([Bind("Id,Label,Description,Price,CategoryId")] Product product)
         {
-            if (!(String.IsNullOrEmpty(product.Label)) && !(String.IsNullOrEmpty(product.Description)) && !(((float)product.Price < 0)) && !(product.CategoryId == 0))
+            string saveResult = _saveFilesService.SaveFileToImgDirectory(Request.Form.Files[0], product.Label + "_" + product.Category + "image");
+            if (saveResult.Contains("Error :"))
             {
+                ModelState.AddModelError("PictureName", saveResult);
+            }
+            if (!(String.IsNullOrEmpty(product.Label)) && !(String.IsNullOrEmpty(product.Description)) && !(((float)product.Price < 0)) && !(product.CategoryId == 0) && !saveResult.Contains("Error :"))
+            {
+                product.PictureName = saveResult;
                 _context.Add(product);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));

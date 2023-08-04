@@ -21,6 +21,7 @@ builder.Services.AddRazorPages()
     .AddRazorRuntimeCompilation();
 builder.Services.AddSingleton<ICheckStringDateService, CheckStringDateService>();
 builder.Services.AddSingleton<ICreateArticleService, CreateArticleService>();
+builder.Services.AddSingleton<ISaveFilesService, SaveFilesService>();
 
 var app = builder.Build();
 
