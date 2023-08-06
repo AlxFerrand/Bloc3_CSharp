@@ -14,9 +14,16 @@ namespace Bloc3_CSharp.Services.concretServices
             string uploadPath = Path.Combine(_hostEnvironment.ContentRootPath,"wwwroot" ,"img");
             if (file.Length > 0)
             {
+                try
+                {
+                    CheckMimeTypeImg(file);
+                }
+                catch (Exception ex) {
+                    return "Error : MIME Type not good";
+                }
                 if (CheckMimeTypeImg(file))
                 {
-                    newFileName = newFileName + Path.GetExtension(file.FileName).ToLowerInvariant();
+                    newFileName = newFileName + DateTime.Now.ToString("yyyy'-'MM'-'dd'T'HH'-'mm'-'ss") + Path.GetExtension(file.FileName).ToLowerInvariant();
                     string filePath = Path.Combine(uploadPath, newFileName);
                     using (Stream fileStream = new FileStream(filePath, FileMode.Create))
                     {
@@ -32,6 +39,18 @@ namespace Bloc3_CSharp.Services.concretServices
         public string SaveFileToMyDirectory(string path, IFormFile file)
         {
             throw new NotImplementedException();
+        }
+
+        public void DeleteFileToImgDirectory(string fileName) 
+        {
+            if (!fileName.Equals(""))
+            {
+                string filePath = Path.Combine(_hostEnvironment.ContentRootPath, "wwwroot", "img", fileName);
+                if (File.Exists(filePath))
+                {
+                    File.Delete(filePath);
+                }
+            }
         }
 
         public bool CheckMimeTypeImg (IFormFile file)

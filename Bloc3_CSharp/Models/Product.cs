@@ -14,6 +14,7 @@ namespace Bloc3_CSharp.Models
 
         public int CategoryId { get; set; }
         [ForeignKey(nameof(CategoryId))]
+        [ValidateNever]
         public virtual Category Category { get; set; }
 
         [MaybeNull]

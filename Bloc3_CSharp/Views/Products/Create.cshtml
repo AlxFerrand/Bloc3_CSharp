@@ -32,8 +32,9 @@
                 <select asp-for="CategoryId" class ="form-control" asp-items="ViewBag.CategoryId"></select>
             </div>
             <div class="form-group">
-                <label asp-for="PictureName" class="control-label"></label>
-                <input asp-for="PictureName" type="file" name="PictureFile" accept=".jpeg, .png, .jpg" class="form-control" />
+                <label asp-for="PictureName" class="control-label">Picture</label>
+                <input asp-for="PictureName" type="hidden" value="File" />
+                <input name="PictureFile" type="file" accept=".jpeg, .png, .jpg" class="form-control" />
                 <span asp-validation-for="PictureName" class="text-danger"></span>
             </div>
             <div class="form-group text-center mt-3 mb-2">

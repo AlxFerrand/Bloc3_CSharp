@@ -10,7 +10,7 @@
 <hr />
 <div class="row justify-content-center">
     <div class="col-md-4">
-        <form asp-action="Edit">
+        <form asp-action="Edit" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
             <div class="form-group">
@@ -36,6 +36,8 @@
             <div class="form-group">
                 <label asp-for="PictureName" class="control-label"></label>
                 <input asp-for="PictureName" class="form-control" />
+                <label for="PictureFile" class="control-label">New Picture</label>
+                <input name="PictureFile" type="file" accept=".jpeg, .png, .jpg" class="form-control" />
                 <span asp-validation-for="PictureName" class="text-danger"></span>
             </div>
                 <input type="hidden" asp-for="DiscountId"/>

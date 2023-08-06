@@ -98,14 +98,29 @@ namespace Bloc3_CSharp.Controllers
         [HttpPost]
         [Authorize(Roles = "SuperAdmin, Admin")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Label,Description,Price,CategoryId")] Product product)
+        public async Task<IActionResult> Create([Bind("Id,Label,Description,Price,CategoryId,PictureName")] Product product)
         {
-            string saveResult = _saveFilesService.SaveFileToImgDirectory(Request.Form.Files[0], product.Label + "_" + product.Category + "image");
+            if (product.Price < 0)
+            {
+                ModelState.AddModelError("Price", "Price must be greater than 0");
+            }
+            if (_context.Categories.Find(product.CategoryId) == null)
+            {
+                ModelState.AddModelError("CategoryId", "Category not existe ");
+            }
+            string saveResult = "";
+            try
+            {
+                saveResult = _saveFilesService.SaveFileToImgDirectory(Request.Form.Files[0], product.Label + "_");
+            }catch (Exception e)
+            {
+                saveResult = "";
+            }
             if (saveResult.Contains("Error :"))
             {
                 ModelState.AddModelError("PictureName", saveResult);
-            }
-            if (!(String.IsNullOrEmpty(product.Label)) && !(String.IsNullOrEmpty(product.Description)) && !(((float)product.Price < 0)) && !(product.CategoryId == 0) && !saveResult.Contains("Error :"))
+            }            
+            if (ModelState.IsValid)
             {
                 product.PictureName = saveResult;
                 _context.Add(product);
@@ -130,7 +145,7 @@ namespace Bloc3_CSharp.Controllers
             {
                 return NotFound();
             }
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Id", product.CategoryId);
+            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name", product.CategoryId);
             return View(product);
         }
 
@@ -138,19 +153,46 @@ namespace Bloc3_CSharp.Controllers
         [HttpPost]
         [Authorize(Roles = "SuperAdmin, Admin")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Label,Description,Price,CategoryId,PictureName,DiscountId")] Product product)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Label,Description,Price,CategoryId,DiscountId,PictureName")] Product product)
         {
             if (id != product.Id)
             {
                 return NotFound();
             }
-
-            if (!String.IsNullOrEmpty(product.Label) && !String.IsNullOrEmpty(product.Description) && !(product.Price<=0))
+            if (product.Price < 0)
+            {
+                ModelState.AddModelError("Price", "Price must be greater than 0");
+            }
+            if (_context.Categories.Find(product.CategoryId) == null)
+            {
+                ModelState.AddModelError("CategoryId", "Category not existe ");
+            }
+            string saveResult = "";
+            string oldPicture = "";
+            try
+            {
+                saveResult = _saveFilesService.SaveFileToImgDirectory(Request.Form.Files[0], product.Label + "_");
+            }
+            catch (Exception e)
+            {
+                saveResult = product.PictureName;
+            }
+            if (saveResult.Contains("Error :"))
+            {
+                ModelState.AddModelError("PictureName", saveResult);
+            }
+            if (!saveResult.Equals(product.PictureName))
+            {
+                oldPicture = product.PictureName;
+            }
+            if (ModelState.IsValid)
             {
                 try
                 {
+                    product.PictureName = saveResult;
                     _context.Update(product);
                     await _context.SaveChangesAsync();
+                    _saveFilesService.DeleteFileToImgDirectory(oldPicture);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -204,7 +246,7 @@ namespace Bloc3_CSharp.Controllers
             {
                 _context.Products.Remove(product);
             }
-            
+            _saveFilesService.DeleteFileToImgDirectory(product.PictureName);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
