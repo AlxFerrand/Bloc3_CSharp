@@ -4,27 +4,12 @@
 <h2 class="text-center pt-2">Our Items</h2>
 <div class="row align-items-center">
     <h4 class="col-1 textFilter">Filter:</h4>
-    <select class=" col-1 catFilter" id="catFilter">
-        @if (Model.SelectedCategory.Id == 0 )
-        {
-            <option value="all">All</option>
-            @foreach (var c in Model.Categories)
-            {
-                <option value="@c.Id">@c.Name</option>
-            }
-
-        } else
-        {
-            <option value="@Model.SelectedCategory.Id">@Model.SelectedCategory.Name</option>
-            <option value="all">All</option>
-            @foreach (var c in Model.Categories)
-            {
-                <option value="@c.Id">@c.Name</option>
-            }
-
-        }
-    </select>
-    <button role="button" class="col-1 btnFilter" id="btnFilter">Confirm</button>
+    <form method="get">
+        <select name="CatId" asp-items="ViewBag.CatId">
+            <option value="0">All</option>
+        </select>
+        <input type="submit" value="Confirme" class="btnFilter" />
+    </form>
 </div>
 @if (Model.Articles.Count() == 0)
 {

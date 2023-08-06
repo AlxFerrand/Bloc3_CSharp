@@ -3,11 +3,10 @@
     public class CatalogViewModel
     {
         
-        public CatalogViewModel(List<Articles> articles, List<Category> categories, Category selectedCategory) 
+        public CatalogViewModel(List<Articles> articles, List<Category> categories) 
         {
             Articles = articles;
             Categories = categories;
-            SelectedCategory = selectedCategory;
         }
         public List<Articles> Articles { get; }
         public List<Category> Categories { get; }

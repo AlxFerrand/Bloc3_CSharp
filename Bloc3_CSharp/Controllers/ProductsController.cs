@@ -12,6 +12,7 @@ using System.Data;
 using Bloc3_CSharp.Services.abstractServices;
 using Microsoft.AspNetCore.WebUtilities;
 using Bloc3_CSharp.Services.concretServices;
+using Microsoft.Data.SqlClient;
 
 namespace Bloc3_CSharp.Controllers
 {
@@ -30,9 +31,10 @@ namespace Bloc3_CSharp.Controllers
 
         // GET: Products
         [Authorize(Roles = "SuperAdmin, Admin")]
-        public async Task<IActionResult> Index(int? catId)
+        public async Task<IActionResult> Index(int? catId, string sortOrder)
         {
             //Recuperation des produit en fonction de la category
+            ViewData["order"] = String.IsNullOrEmpty(sortOrder) ? "id" : sortOrder;
             List<Product> products = new List<Product>();
             if (catId == 0 || catId == null)
             {
@@ -50,19 +52,42 @@ namespace Bloc3_CSharp.Controllers
             {
                 articles.Add(_createArticleService.CreateArticle(p, _context));
             }
-
-            Category selectedCategory;
-            if (catId != null)
+            switch (sortOrder)
             {
-                selectedCategory = _context.Categories.Find((int)catId);
-            }
-            else
-            {
-                selectedCategory = new Category();
+                case "id":
+                    articles = articles.OrderBy(d => d.Id).ToList();
+                    break;
+                case "Label":
+                    articles = articles.OrderBy(d => d.Label).ToList();
+                    break;
+                case "Label_desc":
+                    articles = articles.OrderByDescending(d => d.Label).ToList();
+                    break;
+                case "BasePrice":
+                    articles = articles.OrderBy(d => d.BasePrice).ToList();
+                    break;
+                case "BasePrice_desc":
+                    articles = articles.OrderByDescending(d => d.BasePrice).ToList();
+                    break;
+                case "CategoryName":
+                    articles = articles.OrderBy(d => d.CategoryName).ToList();
+                    break;
+                case "CategoryName_desc":
+                    articles = articles.OrderByDescending(d => d.CategoryName).ToList();
+                    break;
+                case "DiscountId":
+                    articles = articles.OrderBy(d => d.DiscountId).ToList();
+                    break;
+                case "DiscountId_desc":
+                    articles = articles.OrderByDescending(d => d.DiscountId).ToList();
+                    break;
+                default:
+                    articles = articles.OrderBy(d => d.Id).ToList();
+                    break;
             }
 
-
-            CatalogViewModel vm = new CatalogViewModel(articles, categories, selectedCategory);
+            ViewData["CatId"] = new SelectList(_context.Categories, "Id", "Name", catId);
+            CatalogViewModel vm = new CatalogViewModel(articles, categories);
             return View(vm);
         }
 

@@ -3,6 +3,7 @@ using Bloc3_CSharp.Models;
 using Bloc3_CSharp.Services.abstractServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 
@@ -48,19 +49,8 @@ namespace Bloc3_CSharp.Controllers
                 articles.Add(_createArticleService.CreateArticle(p, _context));
             }
 
-            //
-            Category selectedCategory;
-            if (catId != null)
-            {
-                selectedCategory = _context.Categories.Find((int)catId);
-            }
-            else
-            {
-                selectedCategory = new Category();
-            }
-            
-
-            CatalogViewModel vm = new CatalogViewModel(articles, categories, selectedCategory);
+            ViewData["CatId"] = new SelectList(_context.Categories, "Id", "Name", catId);
+            CatalogViewModel vm = new CatalogViewModel(articles, categories);
 
             return View(vm);
         }

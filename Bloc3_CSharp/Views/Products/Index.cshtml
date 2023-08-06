@@ -7,28 +7,12 @@
 <h1>Manage Products</h1>
 <div class="row align-items-center">
     <h4 class="col-1 textFilter">Filter:</h4>
-    <select class=" col-1 catFilter" id="manageProductCatFilter">
-        @if (Model.SelectedCategory.Id == 0)
-        {
-            <option value="all">All</option>
-            @foreach (var c in Model.Categories)
-            {
-                <option value="@c.Id">@c.Name</option>
-            }
-
-        }
-        else
-        {
-            <option value="@Model.SelectedCategory.Id">@Model.SelectedCategory.Name</option>
-            <option value="all">All</option>
-            @foreach (var c in Model.Categories)
-            {
-                <option value="@c.Id">@c.Name</option>
-            }
-
-        }
+    <form method="get">
+    <select name="CatId" asp-items="ViewBag.CatId">
+        <option value="0">All</option>
     </select>
-    <button role="button" class="col-1 btnFilter" id="manageProductBtnFilter">Confirm</button>
+        <input type="submit" value="Confirme" class="btnFilter" />
+    </form>
 </div>
 <div class="row justify-content-center">
    <a class="col-2 btn btn-success mb-3" asp-action="Create">Create New</a>
@@ -41,19 +25,47 @@
     <thead>
         <tr class="text-white" style="background-color : rgba(255,141,53,1)">
             <th>
-                Label
+                @if (ViewData["order"].Equals("Label"))
+                {
+                    <a class="text-decoration-none text-white" asp-action="Index" asp-route-sortOrder="Label_desc">Label ▲</a>
+                }
+                else
+                {
+                    <a class="text-decoration-none text-white" asp-action="Index" asp-route-sortOrder="Label">Label ▼</a>
+                }
             </th>
             <th>
                 Description
             </th>
             <th>
-                BasePrice
+                @if (ViewData["order"].Equals("BasePrice"))
+                {
+                    <a class="text-decoration-none text-white" asp-action="Index" asp-route-sortOrder="BasePrice_desc">BasePrice ▲</a>
+                }
+                else
+                {
+                    <a class="text-decoration-none text-white" asp-action="Index" asp-route-sortOrder="BasePrice">BasePrice ▼</a>
+                }
             </th>
             <th>
-               CategoryName
+                @if (ViewData["order"].Equals("CategoryName"))
+                {
+                    <a class="text-decoration-none text-white" asp-action="Index" asp-route-sortOrder="CategoryName_desc">CategoryName ▲</a>
+                }
+                else
+                {
+                    <a class="text-decoration-none text-white" asp-action="Index" asp-route-sortOrder="CategoryName">CategoryName ▼</a>
+                }              
             </th>
             <th>
-                DiscountId
+                @if (ViewData["order"].Equals("DiscountId"))
+                {
+                    <a class="text-decoration-none text-white" asp-action="Index" asp-route-sortOrder="DiscountId_desc">DiscountId ▲</a>
+                }
+                else
+                {
+                    <a class="text-decoration-none text-white" asp-action="Index" asp-route-sortOrder="DiscountId">DiscountId ▼</a>
+                }             
             </th>
             <th></th>
         </tr>
@@ -84,4 +96,3 @@
 }
     </tbody>
 </table>
-<script src="~/js/ManageProducts.js" asp-append-version="true"></script>
