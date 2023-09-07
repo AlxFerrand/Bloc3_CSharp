@@ -7,12 +7,26 @@
 <h1>Manage Products</h1>
 <div class="row align-items-center">
     <h4 class="col-1 textFilter">Filter:</h4>
-    <form method="get">
-    <select name="CatId" asp-items="ViewBag.CatId">
-        <option value="0">All</option>
-    </select>
-        <input type="submit" value="Confirme" class="btnFilter" />
+    <form method="get" class="row align-items-end mb-3">
+        <div class="col-2">
+            <label for="CatId" class="form-label">Category</label>
+            <select class="form-control" name="CatId" asp-items="ViewBag.CatId">
+                <option value="0">All</option>
+            </select>
+        </div>
+        <div class="col-1">
+            <label class="form-label" for="MinPrice">Min Price</label>
+            <input class="form-control" name="MinPrice" value="@ViewBag.MinPrice" />
+        </div>
+        <div class="col-1">
+            <label class="form-label" for="MaxPrice">Max Price</label>
+            <input class="form-control" name="MaxPrice" value="@ViewBag.MaxPrice" />
+        </div>
+        <div class="col-1 ">
+            <input type="submit" value="Confirme" class="btn btn-primary" />
+        </div>
     </form>
+    <hr />
 </div>
 <div class="row justify-content-center">
    <a class="col-2 btn btn-success mb-3" asp-action="Create">Create New</a>

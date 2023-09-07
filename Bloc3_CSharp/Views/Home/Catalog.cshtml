@@ -1,22 +1,37 @@
-﻿@model CatalogViewModel;
+﻿@model List<Articles>;
 
 <h1 class="text-decoration-underline">Catalog</h1>
 <h2 class="text-center pt-2">Our Items</h2>
 <div class="row align-items-center">
     <h4 class="col-1 textFilter">Filter:</h4>
-    <form method="get">
-        <select name="CatId" asp-items="ViewBag.CatId">
-            <option value="0">All</option>
-        </select>
-        <input type="submit" value="Confirme" class="btnFilter" />
+    <form method="get" class="row align-items-end">
+        <div class="col-2">
+            <label for="CatId" class="form-label">Category</label>
+            <select class="form-control" name="CatId" asp-items="ViewBag.CatId">
+                <option value="0">All</option>
+            </select>
+        </div>
+        <div class="col-1">
+            <label class="form-label" for="MinPrice">Min Price</label>
+            <input class="form-control" name="MinPrice" value="@ViewBag.MinPrice" />
+        </div>
+        <div class="col-1">
+            <label class="form-label" for="MaxPrice">Max Price</label>
+            <input class="form-control" name="MaxPrice" value="@ViewBag.MaxPrice" />
+        </div>
+        <div class="col-1 ">
+            <input type="submit" value="Confirme" class="btn btn-primary" />
+        </div>
+        
     </form>
 </div>
-@if (Model.Articles.Count() == 0)
+<hr />
+@if (Model.Count() == 0)
 {
-<h4 class="text-center pt-2 text-warning">Aucun article disponible pour cette categorie</h4>
+    <h4 class="text-center pt-2 text-warning">Sorry, there is no article to display.</h4>
 }
 <div class=" row row-cols-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 row-cols-xxl-6">
-    @foreach(var a in Model.Articles)
+    @foreach(var a in Model)
     {
         <article class="col p-2">
             <!-- Déclaration du composant -->

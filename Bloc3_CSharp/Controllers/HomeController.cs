@@ -2,6 +2,7 @@
 using Bloc3_CSharp.Models;
 using Bloc3_CSharp.Services.abstractServices;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -27,7 +28,7 @@ namespace Bloc3_CSharp.Controllers
             return View();
         }
 
-        public IActionResult Catalog(int? catId)
+        public IActionResult Catalog(int catId,decimal MinPrice,decimal MaxPrice)
         {
             //Recuperation des produit en fonction de la category
             List<Product> products = new List<Product>();
@@ -48,11 +49,27 @@ namespace Bloc3_CSharp.Controllers
             {
                 articles.Add(_createArticleService.CreateArticle(p, _context));
             }
+            if (!(MinPrice < 0))
+            {
+                articles = articles.Where(a => a.Price > MinPrice).ToList();
+            }
+            else
+            {
+                MinPrice = 0;
+            }
+            if (!(MaxPrice <= 0))
+            {
+                articles = articles.Where(a => a.Price < MaxPrice).ToList();
+            }
+            else
+            {
+                MaxPrice = 0;
+            }
 
+            ViewData["MinPrice"] = MinPrice;
+            ViewData["MaxPrice"] = MaxPrice;
             ViewData["CatId"] = new SelectList(_context.Categories, "Id", "Name", catId);
-            CatalogViewModel vm = new CatalogViewModel(articles, categories);
-
-            return View(vm);
+            return View(articles);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

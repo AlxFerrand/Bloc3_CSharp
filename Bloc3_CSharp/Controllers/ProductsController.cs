@@ -31,7 +31,7 @@ namespace Bloc3_CSharp.Controllers
 
         // GET: Products
         [Authorize(Roles = "SuperAdmin, Admin")]
-        public async Task<IActionResult> Index(int? catId, string sortOrder)
+        public async Task<IActionResult> Index(int? catId, string sortOrder, decimal MinPrice, decimal MaxPrice)
         {
             //Recuperation des produit en fonction de la category
             ViewData["order"] = String.IsNullOrEmpty(sortOrder) ? "id" : sortOrder;
@@ -51,6 +51,22 @@ namespace Bloc3_CSharp.Controllers
             foreach (var p in products)
             {
                 articles.Add(_createArticleService.CreateArticle(p, _context));
+            }
+            if (!(MinPrice < 0))
+            {
+                articles = articles.Where(a => a.Price > MinPrice).ToList();
+            }
+            else
+            {
+                MinPrice = 0;
+            }
+            if (!(MaxPrice <= 0))
+            {
+                articles = articles.Where(a => a.Price < MaxPrice).ToList();
+            }
+            else
+            {
+                MaxPrice = 0;
             }
             switch (sortOrder)
             {
@@ -86,6 +102,8 @@ namespace Bloc3_CSharp.Controllers
                     break;
             }
 
+            ViewData["MinPrice"] = MinPrice;
+            ViewData["MaxPrice"] = MaxPrice;
             ViewData["CatId"] = new SelectList(_context.Categories, "Id", "Name", catId);
             CatalogViewModel vm = new CatalogViewModel(articles, categories);
             return View(vm);
