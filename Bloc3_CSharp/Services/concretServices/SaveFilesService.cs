@@ -16,21 +16,20 @@ namespace Bloc3_CSharp.Services.concretServices
             {
                 try
                 {
-                    CheckMimeTypeImg(file);
+                    if (CheckMimeTypeImg(file))
+                    {
+                        newFileName = newFileName + DateTime.Now.ToString("yyyy'-'MM'-'dd'T'HH'-'mm'-'ss") + Path.GetExtension(file.FileName).ToLowerInvariant();
+                        string filePath = Path.Combine(uploadPath, newFileName);
+                        using (Stream fileStream = new FileStream(filePath, FileMode.Create))
+                        {
+                            file.CopyTo(fileStream);
+                        }
+                        return newFileName;
+                    }
                 }
                 catch (Exception ex) {
                     return "Error : MIME Type not good";
-                }
-                if (CheckMimeTypeImg(file))
-                {
-                    newFileName = newFileName + DateTime.Now.ToString("yyyy'-'MM'-'dd'T'HH'-'mm'-'ss") + Path.GetExtension(file.FileName).ToLowerInvariant();
-                    string filePath = Path.Combine(uploadPath, newFileName);
-                    using (Stream fileStream = new FileStream(filePath, FileMode.Create))
-                    {
-                        file.CopyTo(fileStream);
-                    }
-                    return newFileName;
-                }
+                }  
                 return "Error : MIME Type not good";
             }
             return "Error : Empty file";
