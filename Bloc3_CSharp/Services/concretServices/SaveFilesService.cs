@@ -57,9 +57,14 @@ namespace Bloc3_CSharp.Services.concretServices
             using (var reader = new BinaryReader(file.OpenReadStream()))
             {
                 var ext = Path.GetExtension(file.FileName).ToLowerInvariant();
-                var signature = MimeDictionary.mimeDictionaryImg[ext];
-                var headerBytes = reader.ReadBytes(signature.Max(m => m.Length));
-                return signature.Any(signature => headerBytes.Take(signature.Length).SequenceEqual(headerBytes));
+                if (MimeDictionary.mimeDictionaryImg.ContainsKey(ext))
+                {
+                    var signature = MimeDictionary.mimeDictionaryImg[ext];
+                    var headerBytes = reader.ReadBytes(signature.Max(m => m.Length));
+                    return signature.Any(signature => headerBytes.Take(signature.Length).SequenceEqual(headerBytes));
+                }
+                return false;
+                
             }
         }
     }

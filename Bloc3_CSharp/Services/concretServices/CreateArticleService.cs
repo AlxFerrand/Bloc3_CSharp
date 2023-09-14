@@ -50,6 +50,10 @@ namespace Bloc3_CSharp.Services.concretServices
 
         public decimal SetPrice(decimal basePrice, int discountValue)
         {
+            if ((discountValue > 100) || (discountValue < 0)) 
+            {
+                return basePrice;
+            }
             decimal price = Math.Round(basePrice * (100 - discountValue)) / 100.0M;
             if (price > 0)
             {
