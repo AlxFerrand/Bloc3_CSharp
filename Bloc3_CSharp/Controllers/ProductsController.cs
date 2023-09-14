@@ -47,11 +47,8 @@ namespace Bloc3_CSharp.Controllers
             //Recuperation de la liste des categories
             List<Category> categories = _context.Categories.ToList();
             //Creation des Articles pour vm
-            List<Articles> articles = new List<Articles>();
-            foreach (var p in products)
-            {
-                articles.Add(_createArticleService.CreateArticle(p, _context));
-            }
+            List<Articles> articles = _createArticleService.CreateArticlesList(products);
+            
             if (!(MinPrice < 0))
             {
                 articles = articles.Where(a => a.Price > MinPrice).ToList();

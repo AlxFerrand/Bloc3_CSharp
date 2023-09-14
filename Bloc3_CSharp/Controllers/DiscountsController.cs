@@ -250,12 +250,8 @@ namespace Bloc3_CSharp.Controllers
                 return NotFound();
             }
             var productsListOfDiscount = _context.Products.Include(p => p.Category).Where(p => p.DiscountId == id).ToList();
-            List<Articles> articlesListOfDiscount = new List<Articles>();
-            foreach (var p in productsListOfDiscount)
-            {
-                articlesListOfDiscount.Add(_createArticleService.CreateArticle(p, _context));
-            }
-
+            List<Articles> articlesListOfDiscount = _createArticleService.CreateArticlesList(productsListOfDiscount);
+            
             AffectedProductsViewModel vm = new AffectedProductsViewModel(discount, articlesListOfDiscount);
 
             return View(vm);
@@ -303,12 +299,8 @@ namespace Bloc3_CSharp.Controllers
                 return NotFound();
             }
             var productsListNotOnDiscount = _context.Products.Include(p => p.Category).Where(p => p.DiscountId != id).ToList();
-            List<Articles> articlesListNotOnDiscount = new List<Articles>();
-            foreach (var p in productsListNotOnDiscount)
-            {
-                articlesListNotOnDiscount.Add(_createArticleService.CreateArticle(p, _context));
-            }
-
+            List<Articles> articlesListNotOnDiscount = _createArticleService.CreateArticlesList(productsListNotOnDiscount);
+         
             AffectedProductsViewModel vm = new AffectedProductsViewModel(discount, articlesListNotOnDiscount);
 
             return View(vm);

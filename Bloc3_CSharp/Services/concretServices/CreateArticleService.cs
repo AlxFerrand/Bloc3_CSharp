@@ -1,18 +1,41 @@
 ﻿using Bloc3_CSharp.Data;
 using Bloc3_CSharp.Models;
 using Bloc3_CSharp.Services.abstractServices;
+using Microsoft.EntityFrameworkCore;
 
 namespace Bloc3_CSharp.Services.concretServices
 {
     public class CreateArticleService : ICreateArticleService
     {
         private readonly ICheckStringDateService _checkStringDateService;
-        public CreateArticleService(ICheckStringDateService checkStringDateService) 
+        private readonly ApplicationDbContext _context;
+        public CreateArticleService(ICheckStringDateService checkStringDateService, ApplicationDbContext context) 
         {
             _checkStringDateService = checkStringDateService;
+            _context = context;
         }
 
-        public Articles CreateArticle(Product p, ApplicationDbContext context)
+        public List<Articles> CreateArticlesList(List<Product> productsList) 
+        {
+            List<Articles> articlesList = new List<Articles>();
+            foreach (var p in productsList)
+            {
+                Discount productDiscount;
+
+                if (!(_context.Discounts.Find(p.DiscountId) == null))
+                {
+                    productDiscount = _context.Discounts.Find(p.DiscountId);
+                }
+                else
+                {
+                    productDiscount = new Discount();
+                }
+                articlesList.Add(CreateArticle(p, productDiscount));
+            }
+            return articlesList;
+        }
+
+        public Articles CreateArticle(Product p, Discount productDiscount)
         {
             Articles newArticle = new Articles();
             newArticle.Id = p.Id;
@@ -23,13 +46,12 @@ namespace Bloc3_CSharp.Services.concretServices
             newArticle.CategoryName = p.Category.Name;
             newArticle.BasePrice = p.Price;
             newArticle.DiscountId = p.DiscountId;
-            if (!(newArticle.DiscountId == 0)
-                && !(context.Discounts.Find(newArticle.DiscountId) == null) 
-                && CheckValidityDiscount(context.Discounts.Find(newArticle.DiscountId)))
+            if (!(productDiscount.Id == 0) 
+                && CheckValidityDiscount(productDiscount))
             {
-                newArticle.DiscountValue = context.Discounts.Find(newArticle.DiscountId).Value;
-                newArticle.OnDateDiscount = context.Discounts.Find(newArticle.DiscountId).OnDate;
-                newArticle.OffDateDiscount = context.Discounts.Find(newArticle.DiscountId).OffDate;
+                newArticle.DiscountValue = productDiscount.Value;
+                newArticle.OnDateDiscount = productDiscount.OnDate;
+                newArticle.OffDateDiscount = productDiscount.OffDate;
                 
             }
             else

@@ -1,4 +1,5 @@
-﻿using Bloc3_CSharp.Models;
+﻿using Bloc3_CSharp.Data;
+using Bloc3_CSharp.Models;
 using Bloc3_CSharp.Services.concretServices;
 
 namespace TestProject_Mercadona
@@ -8,13 +9,14 @@ namespace TestProject_Mercadona
         
         CreateArticleService createArticleServiceTest;
         CheckStringDateService checkStringDateServiceTest = new CheckStringDateService();
+        private readonly ApplicationDbContext _context;
         static decimal BASE_PRICE = 100.0M;
 
         [SetUp]
         public void Setup()
         {
             //var checkStringDateServiceMock = Mock.Of<ICheckStringDateService>();
-            createArticleServiceTest = new CreateArticleService(checkStringDateServiceTest);
+            createArticleServiceTest = new CreateArticleService(checkStringDateServiceTest, _context);
         }
 
         [Test]
@@ -55,12 +57,31 @@ namespace TestProject_Mercadona
         }
         // code a remanié : Discount envoyé en parametre
         [Test]
-        public void TestCreateArticle()
+        public void TestCreateArticle_WithDiscount()
         {
+            Category category = new Category(1,"Test");
             Product productTest = new Product(1,"Label","Description",100.0M,1,"Picture",1);
+            productTest.Category = category;
             Discount discountTest = new Discount(1, "1900-01-01", "5999-12-31", 50);
-            //Assert.IsNotNull(createArticleServiceTest.CreateArticle(productTest, discountTest));
+            Articles article = createArticleServiceTest.CreateArticle(productTest, discountTest);
+            Assert.IsNotNull(article);
+            Assert.AreEqual(50, article.DiscountValue);
+            Assert.AreEqual("1900-01-01",article.OnDateDiscount);
+            Assert.AreEqual("5999-12-31",article.OffDateDiscount);
+        }
 
+        [Test]
+        public void TestCreateArticle_WithOutDiscount()
+        {
+            Category category = new Category(1, "Test");
+            Product productTest = new Product(1, "Label", "Description", 100.0M, 1, "Picture", 0);
+            productTest.Category = category;
+            Discount discountTest = new Discount(1, "1900-01-01", "5999-12-31", 50);
+            Articles article = createArticleServiceTest.CreateArticle(productTest, discountTest);
+            Assert.IsNotNull(article);
+            Assert.AreEqual(0,article.DiscountValue);
+            Assert.AreEqual("",article.OnDateDiscount);
+            Assert.AreEqual("",article.OffDateDiscount);
         }
 
     }

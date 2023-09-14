@@ -1,4 +1,5 @@
 ﻿using Bloc3_CSharp.Services.abstractServices;
+using System.Text.RegularExpressions;
 
 namespace Bloc3_CSharp.Services.concretServices
 {
@@ -11,6 +12,7 @@ namespace Bloc3_CSharp.Services.concretServices
         }
         public string SaveFileToImgDirectory(IFormFile file, string newFileName)
         {
+            newFileName = Regex.Replace(newFileName,"[^a-zA-Z0-9_]","");
             string uploadPath = Path.Combine(_hostEnvironment.ContentRootPath,"wwwroot" ,"img");
             if (file.Length > 0)
             {
