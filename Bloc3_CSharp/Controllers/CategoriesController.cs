@@ -142,6 +142,15 @@ namespace Bloc3_CSharp.Controllers
                 return NotFound();
             }
 
+            if (!(_context.Products.Include(p => p.Category).Where(p => p.CategoryId == id).ToList().Count == 0))
+            {
+                ViewData["Deletable"] = "false";
+            }
+            else
+            {
+                ViewData["Deletable"] = "true";
+            }
+
             return View(category);
         }
 
