@@ -76,7 +76,7 @@ namespace TestProject_Mercadona
             Category category = new Category(1, "Test");
             Product productTest = new Product(1, "Label", "Description", 100.0M, 1, "Picture", 0);
             productTest.Category = category;
-            Discount discountTest = new Discount(1, "1900-01-01", "5999-12-31", 50);
+            Discount discountTest = new Discount();
             Articles article = createArticleServiceTest.CreateArticle(productTest, discountTest);
             Assert.IsNotNull(article);
             Assert.AreEqual(0,article.DiscountValue);
