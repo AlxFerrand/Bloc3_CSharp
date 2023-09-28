@@ -1,0 +1,16 @@
+{
+  "dependencies": {
+    "mssql1": {
+      "ignored": "true",
+      "type": "mssql",
+      "connectionId": "ConnectionStrings:DefaultConnection"
+    },
+    "mssql2": {
+      "serviceConnectorResourceId": "/subscriptions/[parameters('subscriptionId')]/resourcegroups/[parameters('resourceGroupName')]/providers/Microsoft.Web/sites/Bloc3CSharpMercadona/providers/Microsoft.ServiceLinker/linkers/ConnectionStringsDefaultConnection_B9CB165AE0",
+      "secretStore": "AzureAppSettings",
+      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.Sql/servers/bloc3-csharp-mercadonadbserver/databases/Bloc3_CSharp_db",
+      "type": "mssql.azure",
+      "connectionId": "ConnectionStrings:DefaultConnection"
+    }
+  }
+}
