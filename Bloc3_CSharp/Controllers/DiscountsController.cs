@@ -302,7 +302,7 @@ namespace Bloc3_CSharp.Controllers
             List<Articles> articlesListNotOnDiscount = _createArticleService.CreateArticlesList(productsListNotOnDiscount);
          
             AffectedProductsViewModel vm = new AffectedProductsViewModel(discount, articlesListNotOnDiscount);
-
+            ViewData["NbAffectedProduct"] = _context.Products.Include(p => p.Category).Where(p => p.DiscountId == id).ToList().Count();
             return View(vm);
         }
 

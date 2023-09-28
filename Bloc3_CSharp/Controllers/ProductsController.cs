@@ -154,7 +154,7 @@ namespace Bloc3_CSharp.Controllers
                 saveResult = _saveFilesService.SaveFileToImgDirectory(Request.Form.Files[0], product.Label + "_");
             }catch (Exception e)
             {
-                saveResult = "";
+                saveResult = "No";
             }
             if (saveResult.Contains("Error :"))
             {
@@ -206,6 +206,10 @@ namespace Bloc3_CSharp.Controllers
             if (_context.Categories.Find(product.CategoryId) == null)
             {
                 ModelState.AddModelError("CategoryId", "Category not existe ");
+            }
+            if (String.IsNullOrEmpty(product.PictureName))
+            {
+                product.PictureName = "No";
             }
             string saveResult = "";
             string oldPicture = "";
